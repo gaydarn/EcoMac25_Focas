@@ -26,42 +26,27 @@ namespace CNC_WRMACRO
         {
             // CONNECTION TO NCGuide 
 
-            short ret = Focas1.cnc_allclibhndl3("172.16.199.10", 8193, 10, out _h);
+            short ret = Focas1.cnc_allclibhndl3(_IpAddr, _port, _timeOut, out _h);
             if (ret != 0)
             {
-                Console.WriteLine("ERROR" + ret + "\n");
+                return "ERROR" + ret + "\n";
             }
-            else
-            {
-                Console.WriteLine("CONNECTION OK" + "\n");
-            }
-
-
+ 
             readDiagnoseExample("connect");
-
-            return "done";
+            return "CONNECTION OK" + "\n";
+            
         }
 
         public void StartRecording()
         {
+            //Configure periodic task
             _stop.Reset();
-            _registeredWait = ThreadPool.RegisterWaitForSingleObject(_stop,
-                new WaitOrTimerCallback(PeriodicProcess), null, _delay_ms, false);
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Reset();
-            stopwatch.Start();
-            //Write header in csv
+            _registeredWait = ThreadPool.RegisterWaitForSingleObject(_stop, new WaitOrTimerCallback(PeriodicProcess), null, _delay_ms, false);
+
+            //Init CSV with headers
             _dataStream.WriteLine("Axe ID ; Data type ; Mac Addr ; Time ; value");
-            
+
             readDiagnoseExample("start recording");
-            readDiagnoseExample("start recording");
-            readDiagnoseExample("start recording");
-            readDiagnoseExample("start recording");
-            readDiagnoseExample("start recording");
-            readDiagnoseExample("start recording");
-            stopwatch.Stop();
-            Console.WriteLine("Ticks: " + stopwatch.ElapsedTicks +
-            " mS: " + stopwatch.ElapsedMilliseconds);
         }
 
         public void StopRecording()
@@ -71,9 +56,9 @@ namespace CNC_WRMACRO
 
         private void PeriodicProcess(object state, bool timeout)
         {
-            Stopwatch stopwatch = new Stopwatch();
             if (timeout)
             {
+                Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Reset();
                 stopwatch.Start();
 
@@ -81,11 +66,11 @@ namespace CNC_WRMACRO
                 readDiagnoseExample("periodic");
 
                 // Periodic processing here
-                /*
+                //Read diagnose area
                 var tabDiag = new Focas1.ODBDGN[100];
                 short s_number = 4920;
                 short e_number = 4922;
-                short axis = -1;
+                short axis = 1;
                 short lenght = 100;
                 for (int i= tabDiag.Length; i>0; i--)
                 {
@@ -100,11 +85,8 @@ namespace CNC_WRMACRO
                 {
                     Console.Write("Diagnose N° " + s_number + " = " + tabDiag[0].u.idata + "\n\n");
                 }
-                */
-
-
-
-                _dataStream.WriteLine("2;ff-00-54-AB-00;" + DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond + ";" + _counter);
+               
+                _dataStream.WriteLine("10;CNC Focas;" + DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond + ";" + _counter);
                 
                 stopwatch.Stop();
                 Console.WriteLine("Ticks: " + stopwatch.ElapsedTicks +
@@ -120,13 +102,13 @@ namespace CNC_WRMACRO
         private RegisteredWaitHandle _registeredWait;
 
 
-        string _IpAddr;
-        ushort _port;
-        int _timeOut;
-        int _delay_ms;
-        int _counter;
-        StreamWriter _dataStream;
-        ushort _h; // LIBRARY HANDLE
+        private string _IpAddr;
+        private ushort _port;
+        private int _timeOut;
+        private int _delay_ms;
+        private int _counter;
+        private StreamWriter _dataStream;
+        private ushort _h; // LIBRARY HANDLE
 
         public void readDiagnoseExample(string from)
         {
