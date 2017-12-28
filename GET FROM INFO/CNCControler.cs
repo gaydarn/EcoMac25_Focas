@@ -32,7 +32,10 @@ namespace CNC_WRMACRO
                 return "ERROR" + ret + "\n";
             }
  
-            readDiagnoseExample("connect");
+            //Read first test diagnose
+            readDiagnoseTest("1 connect");
+            readDiagnoseAreaTest("1 connect");
+
             return "CONNECTION OK" + "\n";
             
         }
@@ -46,7 +49,11 @@ namespace CNC_WRMACRO
             //Init CSV with headers
             _dataStream.WriteLine("Axe ID ; Data type ; Mac Addr ; Time ; value");
 
-            readDiagnoseExample("start recording");
+            //Read second test diagnose
+            readDiagnoseTest("2 start recording");
+            readDiagnoseAreaTest("2 start recording");
+
+
         }
 
         public void StopRecording()
@@ -63,29 +70,9 @@ namespace CNC_WRMACRO
                 stopwatch.Start();
 
 
-                readDiagnoseExample("periodic");
-
-                // Periodic processing here
-                //Read diagnose area
-                var tabDiag = new Focas1.ODBDGN[100];
-                short s_number = 4920;
-                short e_number = 4922;
-                short axis = 1;
-                short lenght = 100;
-                for (int i= tabDiag.Length; i>0; i--)
-                {
-                    tabDiag[i-1] = new Focas1.ODBDGN();
-                }
-                short ret = Focas1.cnc_diagnosr(_h, ref s_number, e_number, ref axis, ref lenght, tabDiag);
-                if (ret != 0)
-                {
-                    Console.WriteLine("ERROR" + ret);
-                }
-                else
-                {
-                    Console.Write("Diagnose N° " + s_number + " = " + tabDiag[0].u.idata + "\n\n");
-                }
-               
+                readDiagnoseTest("3 periodic");
+                readDiagnoseAreaTest("3 periodic");
+                
                 _dataStream.WriteLine("10;CNC Focas;" + DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond + ";" + _counter);
                 
                 stopwatch.Stop();
@@ -110,22 +97,42 @@ namespace CNC_WRMACRO
         private StreamWriter _dataStream;
         private ushort _h; // LIBRARY HANDLE
 
-        public void readDiagnoseExample(string from)
+        public void readDiagnoseTest(string testfrom)
         {
             // CNC Read Diagnose
-            short number = 1002; //Number of diagnose
+            short number = 4900; //Number of diagnose
             short axis = 0;   // 0: assigns no axis
             short length;
             Focas1.ODBDGN diag = new Focas1.ODBDGN();
 
-            length = 4 + 8 * 1;
+            length = 4 + 4 * 1;
 
             short ret = Focas1.cnc_diagnoss(_h, number, axis, length, diag);
 
             if (ret != 0)
-                Console.WriteLine("ERROR" + ret);
+                Console.WriteLine(testfrom + " - ERROR" + ret);
             else
-                Console.Write(from + " - Diagnose N° " + number + " = " + diag.u.idata + "\n\n");
+                Console.WriteLine(testfrom + " - Diagnose N° " + number + " = " + diag.u.idata);
+        }
+
+        public void readDiagnoseAreaTest(string testfrom)
+        {
+            //Read first test diagnose area
+            var tabDiag = new byte[100];
+            short s_number = 4910;
+            short e_number = 4912;
+            short axis = 0;
+            short lenght = 3 * (4 + 8 * 1);
+
+            short ret = Focas1.cnc_diagnosr(_h, ref s_number, e_number, ref axis, ref lenght, tabDiag);
+            if (ret != 0)
+            {
+                Console.WriteLine(testfrom + " - ERROR" + ret);
+            }
+            else
+            {
+                Console.WriteLine(testfrom + " - Diagnose range from N° " + s_number + "to N° " + e_number + " = " + tabDiag[0]);
+            }
         }
     }
 }

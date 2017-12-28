@@ -19,7 +19,7 @@ namespace CNC_WRMACRO
 
         public static void Pause()
         {
-            Console.Write("Press any key to continue . . . ");
+            Console.WriteLine("Press any key to continue/quit . . . ");
             Console.ReadKey(true);
         }
 
@@ -35,19 +35,32 @@ namespace CNC_WRMACRO
             Console.WriteLine("CNC IP Adress : " + config.CncIpAddr);
             Console.WriteLine("CNC Port : " + config.CncPort);
 
+            string path = null;
+            /*
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-
             saveFileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             saveFileDialog.FilterIndex = 2;
             saveFileDialog.RestoreDirectory = true;
-
-            string path = null;
+            
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 path = saveFileDialog.FileName;
-            }
 
-            using (StreamWriter writer = new StreamWriter(path))
+                using (StreamWriter writer = new StreamWriter(path))
+                {
+                    CNCControler cncControler = new CNCControler(config.CncIpAddr, (ushort)config.CncPort, 1000, writer);
+
+                    Console.WriteLine(cncControler.Connect());
+
+                    cncControler.StartRecording();
+
+                    Pause();
+
+                    cncControler.StopRecording();
+                }
+            }
+            */
+            using (StreamWriter writer = new StreamWriter(Path.Combine(appPath, @"dummy.csv")))
             {
                 CNCControler cncControler = new CNCControler(config.CncIpAddr, (ushort)config.CncPort, 1000, writer);
 
@@ -56,12 +69,10 @@ namespace CNC_WRMACRO
                 cncControler.StartRecording();
 
                 Pause();
-                cncControler.StopRecording();
 
+                cncControler.StopRecording();
             }
             Pause();
-
-
         }
     }
 }
