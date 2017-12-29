@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,9 +10,6 @@ using System.Windows.Forms;
 
 namespace CNC_WRMACRO
 {
-
-    
-
     class Program
     {
 
@@ -31,12 +29,30 @@ namespace CNC_WRMACRO
             // read file into a string and deserialize JSON to a type
             string appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             Config config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Path.Combine(appPath, @"Configuration//default.json")));
+            StructInfosCnc structInfo = new StructInfosCnc();
+            structInfo.ReadFromJSON();
 
+            /*StructInfosConfig structInfo = new StructInfosConfig();
+            StructDataConfig structData = new StructDataConfig();
+            structData.axis = 1;
+            structData.diagnosNumber = 2;
+            structData.length = 3;
+            structInfo.structInfosConfig.Add(structData);
+            structInfo.structInfosConfig.Add(structData);
+            structInfo.structInfosConfig.Add(structData);
+            structInfo.structInfosConfig.Add(structData);
+
+            string json = JsonConvert.SerializeObject(
+           structInfo, Formatting.Indented,
+           new JsonConverter[] { new StringEnumConverter() });
+
+            System.IO.File.WriteAllText(Path.Combine(appPath, @"Configuration//StructDataConfig.json"), json);
+            */
             Console.WriteLine("CNC IP Adress : " + config.CncIpAddr);
             Console.WriteLine("CNC Port : " + config.CncPort);
 
             string path = null;
-            /*
+            
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             saveFileDialog.FilterIndex = 2;
@@ -48,9 +64,7 @@ namespace CNC_WRMACRO
 
                 using (StreamWriter writer = new StreamWriter(path))
                 {
-                    CNCControler cncControler = new CNCControler(config.CncIpAddr, (ushort)config.CncPort, 1000, writer);
-
-                    Console.WriteLine(cncControler.Connect());
+                    CNCControler cncControler = new CNCControler(config.CncIpAddr, (ushort)config.CncPort, structInfo, 1000, writer);
 
                     cncControler.StartRecording();
 
@@ -59,19 +73,7 @@ namespace CNC_WRMACRO
                     cncControler.StopRecording();
                 }
             }
-            */
-            using (StreamWriter writer = new StreamWriter(Path.Combine(appPath, @"dummy.csv")))
-            {
-                CNCControler cncControler = new CNCControler(config.CncIpAddr, (ushort)config.CncPort, 1000, writer);
-
-                Console.WriteLine(cncControler.Connect());
-
-                cncControler.StartRecording();
-
-                Pause();
-
-                cncControler.StopRecording();
-            }
+            
             Pause();
         }
     }

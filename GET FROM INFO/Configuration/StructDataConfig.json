@@ -1,0 +1,14 @@
+{
+  "structInfosConfig": [
+    {
+      "diagnosNumber": 4920,
+      "axis": -1,
+      "length": 100
+    },
+    {
+      "diagnosNumber": 4930,
+      "axis": -1,
+      "length": 100
+    }
+  ]
+}

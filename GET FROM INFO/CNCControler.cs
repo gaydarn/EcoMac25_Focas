@@ -12,20 +12,27 @@ namespace CNC_WRMACRO
     class CNCControler
     {
 
-        public CNCControler(string IpAddr, ushort port, int delay_ms = 1000, StreamWriter dataStream = null , int timeOut = 10)
+        public CNCControler(string IpAddr, ushort port, StructInfosCnc structInfo, int delay_ms = 1000, StreamWriter dataStream = null , int timeOut = 10)
         {
             _IpAddr = IpAddr;
             _port = port;
             _timeOut = timeOut;
+            _structInfo = structInfo;
             _delay_ms = delay_ms;
             _dataStream = dataStream;
             _counter = 0;
         }
 
-        private int connect()
+        private int cncGetHandle()
         {
             // CONNECTION TO NCGuide 
             return (int)Focas1.cnc_allclibhndl3(_IpAddr, _port, _timeOut, out _h);            
+        }
+
+        private int cncFreeHandle()
+        {
+            // CONNECTION TO NCGuide 
+            return (int)Focas1.cnc_freelibhndl(_h);
         }
 
         public void StartRecording()
@@ -38,8 +45,8 @@ namespace CNC_WRMACRO
             _dataStream.WriteLine("Axe ID ; Data type ; Mac Addr ; Time ; value");
 
             //Read second test diagnose
-            readDiagnoseTest("2 start recording");
-            readDiagnoseAreaTest("2 start recording");
+            //readDiagnose("2 start recording");
+            //readDiagnoseAreaTest("2 start recording");
 
 
         }
@@ -57,15 +64,21 @@ namespace CNC_WRMACRO
                 stopwatch.Reset();
                 stopwatch.Start();
 
-                if(connect()!=;
+                int ret = cncGetHandle();
+                if (ret!=0)
+                {
+                    Console.WriteLine("Unable to get the library handle" + " - ERROR : " + ret);
+                }
 
+                for(int i = 0; i< _structInfo.structInfosCnc.Count; i++)
+                {
+                    readDiagnose(_structInfo.structInfosCnc[i]);
+                }
 
-                readDiagnoseTest("3 periodic");
-                
-                //readDiagnoseAreaTest("3 periodic");
+                _dataStream.WriteLine("10;CNC Focas;" + DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond + ";" + 0);
 
-                _dataStream.WriteLine("10;CNC Focas;" + DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond + ";" + _counter);
-                
+                cncFreeHandle();
+
                 stopwatch.Stop();
                 Console.WriteLine("Ticks: " + stopwatch.ElapsedTicks +
                 " mS: " + stopwatch.ElapsedMilliseconds);
@@ -87,24 +100,17 @@ namespace CNC_WRMACRO
         private int _counter;
         private StreamWriter _dataStream;
         private ushort _h; // LIBRARY HANDLE
+        private Focas1.ODBDGN diag = new Focas1.ODBDGN();
+        public StructInfosCnc _structInfo;
 
-        public void readDiagnoseTest(string testfrom)
-        {
-            // CNC Read Diagnose
-            short number = 4910; //Number of diagnose
-            short axis = 0;   // 0: assigns no axis
-            short length;
-            Focas1.ODBDGN diag = new Focas1.ODBDGN();
-
-            length = 4 + 4 * 1;
-
-            short ret = Focas1.cnc_diagnoss(_h, number, axis, length, diag);
-            /*
-            if (ret != 0)
-                Console.WriteLine(testfrom + " - ERROR" + ret + " - handler : " + _h);
-            else
-                Console.WriteLine(testfrom + " - Diagnose N° " + number + " = " + diag.u.idata + " - handler : " + _h);
-            */
+        public int readDiagnose(StructDataCnc structDataCnc)
+        { 
+            return Focas1.cnc_diagnoss(
+                        _h, 
+                        structDataCnc._config.diagnosNumber, 
+                        structDataCnc._config.axis,
+                        structDataCnc._config.length,
+                        structDataCnc.diag);
         }
 
         public void readDiagnoseAreaTest(string testfrom)
