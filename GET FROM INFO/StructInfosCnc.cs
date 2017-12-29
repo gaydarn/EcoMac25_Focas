@@ -33,6 +33,7 @@ namespace CNC_WRMACRO
 
         public StructDataConfig _config;
         public Focas1.ODBDGN diag = new Focas1.ODBDGN();
+        public long readingTime;
     }
 
     class StructInfosConfig

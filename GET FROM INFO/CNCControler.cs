@@ -42,7 +42,7 @@ namespace CNC_WRMACRO
             _registeredWait = ThreadPool.RegisterWaitForSingleObject(_stop, new WaitOrTimerCallback(PeriodicProcess), null, _delay_ms, false);
 
             //Init CSV with headers
-            _dataStream.WriteLine("Axe ID ; Data type ; Mac Addr ; Time ; value");
+            _dataStream.WriteLine("Mote ID; Mac Addr; Diag. N° ; Axe N° ; Time ; value");
 
             //Read second test diagnose
             //readDiagnose("2 start recording");
@@ -72,10 +72,17 @@ namespace CNC_WRMACRO
 
                 for(int i = 0; i< _structInfo.structInfosCnc.Count; i++)
                 {
-                    readDiagnose(_structInfo.structInfosCnc[i]);
+                    StructDataCnc str = _structInfo.structInfosCnc[i];
+                    readDiagnose(str);
+                    _dataStream.WriteLine(  "10;" + 
+                                            "CNC Focas;" +
+                                            str._config.diagnosNumber + ";" +
+                                            str._config.axis + ";" + 
+                                            str.readingTime + ";" +
+                                            str.diag.u.idata);
                 }
+                _dataStream.Flush();
 
-                _dataStream.WriteLine("10;CNC Focas;" + DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond + ";" + 0);
 
                 cncFreeHandle();
 
@@ -105,12 +112,22 @@ namespace CNC_WRMACRO
 
         public int readDiagnose(StructDataCnc structDataCnc)
         { 
-            return Focas1.cnc_diagnoss(
+            short ret = Focas1.cnc_diagnoss(
                         _h, 
                         structDataCnc._config.diagnosNumber, 
                         structDataCnc._config.axis,
                         structDataCnc._config.length,
                         structDataCnc.diag);
+            structDataCnc.readingTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+            /*if (ret != 0)
+            {
+                Console.WriteLine("ERROR" + ret);
+            }
+            else
+            {
+                Console.Write("Diagnose N° " + structDataCnc._config.diagnosNumber + " = " + structDataCnc.diag.u.idata + "\n\n");
+            }*/
+            return ret;
         }
 
         public void readDiagnoseAreaTest(string testfrom)
