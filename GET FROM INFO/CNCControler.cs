@@ -42,13 +42,13 @@ namespace CNC_WRMACRO
             _registeredWait = ThreadPool.RegisterWaitForSingleObject(_stop, new WaitOrTimerCallback(PeriodicProcess), null, _delay_ms, false);
 
             //Init CSV with headers
-            _dataStream.WriteLine("Mote ID; Mac Addr; Diag. N° ; Axe N° ; Time ; value");
+            _dataStream.WriteLine("Mote ID; MAC addr; Frame Abs. Time ; Delta Time ; Type ; Index ; Value");
 
-            //Read second test diagnose
-            //readDiagnoseAreaTest("2 start recording");
+        //Read second test diagnose
+        //readDiagnoseAreaTest("2 start recording");
 
 
-        }
+    }
 
         public void StopRecording()
         {
@@ -73,11 +73,12 @@ namespace CNC_WRMACRO
                 {
                     StructDataCnc structInfo = _structInfo.structInfosCnc[i];
                     readDiagnose(ref structInfo);
-                    _dataStream.WriteLine(  "10;" + 
+                    _dataStream.WriteLine(  "99;" + 
                                             "CNC Focas;" +
+                                            structInfo.readingTime + ";" +
+                                            "0;" +
                                             structInfo._config.diagnosNumber + ";" +
                                             structInfo._config.axis + ";" +
-                                            structInfo.readingTime + ";" +
                                             structInfo.diag.u.idata);
                 }
                 _dataStream.Flush();
@@ -117,8 +118,10 @@ namespace CNC_WRMACRO
                         structDataCnc._config.axis,
                         structDataCnc._config.length,
                         structDataCnc.diag);
-            structDataCnc.readingTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-            
+            //structDataCnc.readingTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+            structDataCnc.readingTime = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+            _counter++;
+
             return ret;
         }
 

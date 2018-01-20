@@ -32,6 +32,9 @@ namespace CNC_WRMACRO
             StructInfosCnc structInfo = new StructInfosCnc();
             structInfo.ReadFromJSON();
 
+            
+            Console.WriteLine("TimeUTC: " + (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds);
+
             /*StructInfosConfig structInfo = new StructInfosConfig();
             StructDataConfig structData = new StructDataConfig();
             structData.axis = 1;
