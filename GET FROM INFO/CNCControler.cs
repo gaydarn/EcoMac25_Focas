@@ -31,7 +31,7 @@ namespace CNC_WRMACRO
 
         private int cncFreeHandle()
         {
-            // CONNECTION TO NCGuide 
+            // DISCONNECTION TO NCGuide 
             return (int)Focas1.cnc_freelibhndl(_h);
         }
 
