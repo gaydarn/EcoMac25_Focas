@@ -1,33 +1,28 @@
 {
   "structInfosConfig": [
     {
-      "diagnosNumber": 4920,
+      "diagnosNumber": 4901,
       "axis": 1,
       "length": 8
     },
     {
-      "diagnosNumber": 4920,
+      "diagnosNumber": 4901,
       "axis": 2,
       "length": 8
     },
     {
-      "diagnosNumber": 4920,
+      "diagnosNumber": 4901,
       "axis": 3,
       "length": 8
     },
     {
-      "diagnosNumber": 4920,
-      "axis": 4,
-      "length": 8
-    },
-    {
-      "diagnosNumber": 4930,
+      "diagnosNumber": 4902,
       "axis": 1,
       "length": 8
     },
     {
-      "diagnosNumber": 4930,
-      "axis": 2,
+      "diagnosNumber": 4900,
+      "axis": 0,
       "length": 8
     }
   ]

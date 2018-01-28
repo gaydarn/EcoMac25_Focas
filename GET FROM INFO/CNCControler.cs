@@ -37,6 +37,35 @@ namespace CNC_WRMACRO
 
         public void StartRecording()
         {
+            int ret = cncGetHandle();
+            if (ret != 0)
+            {
+                Console.WriteLine("Unable to get the library handle" + " - ERROR : " + ret);
+            }
+            while (true)
+            {
+                //Stopwatch stopwatch = new Stopwatch();
+                //stopwatch.Reset();
+                //stopwatch.Start();
+
+                for (int i = 0; i < _structInfo.structInfosCnc.Count; i++)
+                {
+                    StructDataCnc structInfo = _structInfo.structInfosCnc[i];                  
+                    readAndLogDiagnose(ref structInfo);                   
+                }
+
+
+                readAndLogSeqNum();
+
+                _dataStream.Flush();
+
+                //stopwatch.Stop();
+                //Console.WriteLine("Ticks: " + stopwatch.ElapsedTicks + " mS: " + stopwatch.ElapsedMilliseconds);
+            }
+            
+            cncFreeHandle();
+
+            /*
             //Configure periodic task
             _stop.Reset();
             _registeredWait = ThreadPool.RegisterWaitForSingleObject(_stop, new WaitOrTimerCallback(PeriodicProcess), null, _delay_ms, false);
@@ -47,7 +76,7 @@ namespace CNC_WRMACRO
         //Read second test diagnose
         //readDiagnoseAreaTest("2 start recording");
 
-
+    */
     }
 
         public void StopRecording()
@@ -55,7 +84,7 @@ namespace CNC_WRMACRO
             _stop.Set();
         }
 
-        private void PeriodicProcess(object state, bool timeout)
+        /*private void PeriodicProcess(object state, bool timeout)
         {
             if (timeout)
             {
@@ -94,7 +123,7 @@ namespace CNC_WRMACRO
             else
                 // Stop any more events coming along
                 _registeredWait.Unregister(null);
-        }
+        }*/
 
         private ManualResetEvent _stop = new ManualResetEvent(false);
         private RegisteredWaitHandle _registeredWait;
@@ -110,16 +139,51 @@ namespace CNC_WRMACRO
         private Focas1.ODBDGN diag = new Focas1.ODBDGN();
         public StructInfosCnc _structInfo;
 
-        public int readDiagnose(ref StructDataCnc structDataCnc)
-        { 
+        public int readAndLogDiagnose(ref StructDataCnc structDataCnc)
+        {
+            long time1 = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
             short ret = Focas1.cnc_diagnoss(
                         _h, 
                         structDataCnc._config.diagnosNumber, 
                         structDataCnc._config.axis,
                         structDataCnc._config.length,
                         structDataCnc.diag);
-            //structDataCnc.readingTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-            structDataCnc.readingTime = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+            structDataCnc.readingTime = ((Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds + time1) /2;
+
+            _dataStream.WriteLine("99;" +
+                                            "CNC Focas;" +
+                                            structDataCnc.readingTime + ";" +
+                                            "0;" +
+                                            structDataCnc._config.diagnosNumber + ";" +
+                                            structDataCnc._config.axis + ";" +
+                                            structDataCnc.diag.u.idata);
+
+
+            _counter++;
+
+            return ret;
+        }
+
+        public int readAndLogSeqNum()
+        {
+            long time1 = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+            Focas1.ODBSEQ result = new Focas1.ODBSEQ();
+            int ret = Focas1.cnc_rdseqnum(_h, result);
+
+            //Console.WriteLine("Seq num : " + result.data);
+
+            
+
+            long readingTime = ((Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds + time1) / 2;
+
+            _dataStream.WriteLine("98;" +
+                                        "CNC Focas;" +
+                                        readingTime + ";" +
+                                        "0;" +
+                                        0 + ";" +
+                                        0 + ";" +
+                                        result.data);
+
             _counter++;
 
             return ret;
