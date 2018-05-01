@@ -46,6 +46,7 @@ namespace CNC_WRMACRO
         public short diagnosNumber;
         public short axis;
         public short length;
+        public short channel;
     }
 
 

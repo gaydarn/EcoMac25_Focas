@@ -1,29 +1,46 @@
 {
   "structInfosConfig": [
     {
-      "diagnosNumber": 4901,
+      "diagnosNumber": 410,
       "axis": 1,
-      "length": 8
+      "length": 8,
+      "channel": 1
     },
     {
-      "diagnosNumber": 4901,
+      "diagnosNumber": 308,
+      "axis": 1,
+      "length": 8,
+      "channel": 1
+    },
+    {
+      "diagnosNumber": 308,
       "axis": 2,
-      "length": 8
+      "length": 8,
+      "channel": 1
     },
     {
-      "diagnosNumber": 4901,
+      "diagnosNumber": 308,
       "axis": 3,
-      "length": 8
+      "length": 8,
+      "channel": 1
     },
     {
-      "diagnosNumber": 4902,
+      "diagnosNumber": 410,
       "axis": 1,
-      "length": 8
+      "length": 8,
+      "channel": 2
     },
     {
-      "diagnosNumber": 4900,
-      "axis": 0,
-      "length": 8
+      "diagnosNumber": 308,
+      "axis": 1,
+      "length": 8,
+      "channel": 2
+    },
+    {
+      "diagnosNumber": 308,
+      "axis": 2,
+      "length": 8,
+      "channel": 2
     }
   ]
 }
