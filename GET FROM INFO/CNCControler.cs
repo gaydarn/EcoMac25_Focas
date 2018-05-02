@@ -66,7 +66,9 @@ namespace CNC_WRMACRO
                 long timeStart = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
                 long timeCurr = timeStart;
 
-                while((timeCurr-timeStart) < (3* min))
+                readDiagnoseAreaTest("test");
+
+                /*while ((timeCurr-timeStart) < (3* min))
                 {
                     Focas1.cnc_setpath(_h, 1);
 
@@ -104,7 +106,7 @@ namespace CNC_WRMACRO
 
                     timeCurr = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
 
-                }
+                }*/
 
                 Focas1.cnc_setpath(_h, 1);
 
@@ -336,10 +338,18 @@ namespace CNC_WRMACRO
         {
             //CNC Read Diagnose Area
             var tabDiag = new byte[100];
-            short s_number = 4910;
-            short e_number = 4912;
-            short axis = 0;
-            short lenght = (short)((e_number - s_number) * (4 + 4 * 1));
+            short s_number = 301;
+            short e_number = 302;
+            short axis = 1;
+            short lenght = 100;//(short)((e_number - s_number + 1) * ((4 + 4) * 1));
+
+            //Focas1.ODBDIAGNUM diagnum = new Focas1.ODBDIAGNUM();
+
+            //Focas1.ODBDIAGIF diagif = new Focas1.ODBDIAGIF();
+
+            //short ret = Focas1.cnc_rddiagnum(_h, diagnum);
+
+            //ret = Focas1.cnc_rddiaginfo(_h, s_number, 2, diagif);
 
             short ret = Focas1.cnc_diagnosr(_h, ref s_number, e_number, ref axis, ref lenght, tabDiag);
             if (ret != 0)
