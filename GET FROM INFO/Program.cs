@@ -32,7 +32,7 @@ namespace CNC_WRMACRO
             StructInfosCnc structInfo = new StructInfosCnc();
             structInfo.ReadFromJSON();
 
-            long time1 = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+            /*long time1 = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
             long time2 = time1;
             int i = 0;
             while (time1 == time2)
@@ -43,7 +43,7 @@ namespace CNC_WRMACRO
              
 
 
-            Console.WriteLine("iterations needed to detect different time: " + i);
+            Console.WriteLine("iterations needed to detect different time: " + i);*/
 
             /*StructInfosConfig structInfo = new StructInfosConfig();
             StructDataConfig structData = new StructDataConfig();
