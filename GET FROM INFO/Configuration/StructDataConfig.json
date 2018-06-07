@@ -1,10 +1,51 @@
 {
   "structInfosConfig": [
     {
-      "diagnosNumber": 410,
+      "diagnosNumber": 4901,
       "axis": 1,
       "length": 8,
       "channel": 1
+    },
+    {
+      "diagnosNumber": 4901,
+      "axis": 2,
+      "length": 8,
+      "channel": 1
+    },
+    {
+      "diagnosNumber": 4901,
+      "axis": 3,
+      "length": 8,
+      "channel": 1
+    },{
+      "diagnosNumber": 4901,
+      "axis": 1,
+      "length": 8,
+      "channel": 2
+    },
+    {
+      "diagnosNumber": 4901,
+      "axis": 2,
+      "length": 8,
+      "channel": 2
+    },
+    {
+      "diagnosNumber": 4901,
+      "axis": 3,
+      "length": 8,
+      "channel": 2
+    },
+    {
+      "diagnosNumber": 4902,
+      "axis": 1,
+      "length": 8,
+      "channel": 1
+    },
+    {
+      "diagnosNumber": 4902,
+      "axis": 1,
+      "length": 8,
+      "channel": 2
     },
     {
       "diagnosNumber": 308,
@@ -17,20 +58,13 @@
       "axis": 2,
       "length": 8,
       "channel": 1
-    },
-    {
+    },{
       "diagnosNumber": 308,
       "axis": 3,
       "length": 8,
       "channel": 1
     },
     {
-      "diagnosNumber": 410,
-      "axis": 1,
-      "length": 8,
-      "channel": 2
-    },
-    {
       "diagnosNumber": 308,
       "axis": 1,
       "length": 8,
@@ -39,6 +73,24 @@
     {
       "diagnosNumber": 308,
       "axis": 2,
+      "length": 8,
+      "channel": 2
+    },
+    {
+      "diagnosNumber": 308,
+      "axis": 3,
+      "length": 8,
+      "channel": 2
+    },
+    {
+      "diagnosNumber": 403,
+      "axis": 1,
+      "length": 8,
+      "channel": 1
+    },
+    {
+      "diagnosNumber": 403,
+      "axis": 1,
       "length": 8,
       "channel": 2
     }

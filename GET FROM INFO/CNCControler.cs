@@ -56,20 +56,29 @@ namespace CNC_WRMACRO
             //_dataStream.WriteLine(line);
 
             int min = 60000;
-
+            
             while (true)
             {
                 //Stopwatch stopwatch = new Stopwatch();
                 //stopwatch.Reset();
                 //stopwatch.Start();
 
-                long timeStart = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
-                long timeCurr = timeStart;
+                long timeLastAllMeas = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+                long timeCurr = timeLastAllMeas;
+                bool flagTakeAll = true;
 
-                readDiagnoseAreaTest("test");
+                //readDiagnoseAreaTest("test");
 
-                /*while ((timeCurr-timeStart) < (3* min))
+                while (true)//(timeCurr-timeStart) < (3* min))
                 {
+                    timeCurr = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+
+                    if (timeCurr - timeLastAllMeas > 1 * min)
+                    {
+                        timeLastAllMeas = timeCurr;
+                        flagTakeAll = true;
+                    }
+
                     Focas1.cnc_setpath(_h, 1);
 
                     for (int i = 0; i < _structInfo.structInfosCnc.Count; i++)
@@ -77,7 +86,7 @@ namespace CNC_WRMACRO
                         StructDataCnc structInfo = _structInfo.structInfosCnc[i];
                         if (structInfo._config.channel == 1)
                         {
-                            if (structInfo._config.diagnosNumber != 308)
+                            if (structInfo._config.diagnosNumber > 1000 || flagTakeAll)
                             {
                                 readAndLogDiagnose(ref structInfo, 1);
                             }
@@ -85,7 +94,8 @@ namespace CNC_WRMACRO
                         }
                     }
 
-                    readAndLogAxisLoad(1);
+                    readAndLogSeqNum(1);
+                    //readAndLogAxisLoad(1);
 
                     Focas1.cnc_setpath(_h, 2);
 
@@ -94,21 +104,21 @@ namespace CNC_WRMACRO
                         StructDataCnc structInfo = _structInfo.structInfosCnc[i];
                         if (structInfo._config.channel == 2)
                         {
-                            if (structInfo._config.diagnosNumber != 308)
+                            if (structInfo._config.diagnosNumber > 1000 || flagTakeAll)
                             {
                                 readAndLogDiagnose(ref structInfo, 2);
                             }
                         }
                     }
 
+                    readAndLogSeqNum(2);
+                    //readAndLogAxisLoad(2);
 
-                    readAndLogAxisLoad(2);
+                    flagTakeAll = false;
 
-                    timeCurr = (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+                }
 
-                }*/
-
-                Focas1.cnc_setpath(_h, 1);
+                /*Focas1.cnc_setpath(_h, 1);
 
                 for (int i = 0; i < _structInfo.structInfosCnc.Count; i++)
                 {
@@ -136,12 +146,12 @@ namespace CNC_WRMACRO
                         }
                     }
                 }
-
+                */
                 _dataStream.Flush();
 
-                Thread.Sleep(10* min);
+                //Thread.Sleep(10* min);
 
-                //readAndLogSeqNum();
+                
 
                 
 
