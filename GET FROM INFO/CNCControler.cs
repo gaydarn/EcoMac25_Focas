@@ -256,7 +256,7 @@ namespace CNC_WRMACRO
 
            
 
-            Console.WriteLine(line);
+            //Console.WriteLine(line);
 
             _dataStream.WriteLine(line);
 
